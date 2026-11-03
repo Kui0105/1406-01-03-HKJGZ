@@ -182,10 +182,39 @@ async function handleAccountAction(command: string) {
   }
 }
 
-function copyInvite() {
-  navigator.clipboard?.writeText('https://hk-jia-gong-zai.example/invite/KIKI2026')
-    .then(() => ElMessage.success('邀請連結已複製'))
-    .catch(() => ElMessage.info('邀請連結：hk-jia-gong-zai.example/invite/KIKI2026'))
+function copyTextFallback(value: string) {
+  const textarea = document.createElement('textarea')
+  textarea.value = value
+  textarea.setAttribute('readonly', '')
+  textarea.style.position = 'fixed'
+  textarea.style.left = '-9999px'
+  document.body.appendChild(textarea)
+
+  try {
+    textarea.select()
+    if (!document.execCommand('copy')) throw new Error('Clipboard copy was rejected')
+  } finally {
+    textarea.remove()
+  }
+}
+
+async function copyInvite() {
+  const inviteUrl = new URL('/', window.location.origin)
+  inviteUrl.searchParams.set('ref', 'KIKI2026')
+  const link = inviteUrl.toString()
+
+  try {
+    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(link)
+    else copyTextFallback(link)
+    ElMessage.success('推廣連結已複製')
+  } catch {
+    try {
+      copyTextFallback(link)
+      ElMessage.success('推廣連結已複製')
+    } catch {
+      ElMessage.info(`複製失敗，請手動複製：${link}`)
+    }
+  }
 }
 </script>
 
@@ -204,7 +233,7 @@ function copyInvite() {
         </el-menu-item>
       </el-menu>
       <div class="workspace-sidebar-bottom">
-        <div class="invite-mini"><span class="invite-mini-icon"><el-icon><Link /></el-icon></span><span><strong>邀請好友一起賺</strong><small>分享連結，解鎖更多獎勵</small></span></div>
+        <button class="invite-mini" type="button" aria-label="點擊複製推廣連結" @click="copyInvite"><span class="invite-mini-icon"><el-icon><Link /></el-icon></span><span><strong>邀請好友一起賺</strong><small>點擊複製推廣連結</small></span></button>
         <div class="workspace-user"><img src="/creator-avatar.png" alt="Kiki 的動漫風頭像" /><span><strong>Kiki 林可欣</strong><small>認證網紅</small></span><el-dropdown trigger="hover" placement="top-end" @command="handleAccountAction"><button class="logout-button" type="button" aria-label="帳戶選單" title="帳戶選單"><el-icon><SwitchButton /></el-icon></button><template #dropdown><el-dropdown-menu><el-dropdown-item command="logout">退出登入</el-dropdown-item><el-dropdown-item command="password">修改密碼</el-dropdown-item></el-dropdown-menu></template></el-dropdown></div>
       </div>
     </aside>
@@ -231,7 +260,7 @@ function copyInvite() {
           </section>
           <section class="dashboard-lower">
             <el-card class="chart-card" shadow="never"><div class="section-title"><div><div class="workspace-eyebrow">成長紀錄</div><h2>收益趨勢 <span><el-icon><ArrowUp /></el-icon></span></h2></div><el-button class="period-button" plain @click="ElMessage.info('目前顯示近 7 日收益')">近 7 日 <el-icon><ArrowDown /></el-icon></el-button></div><div class="chart-total">HK$ 8,460.20 <el-tag type="success" effect="light">+ 12.8%</el-tag><small>較上週</small></div><div class="chart-frame"><div class="chart-y-labels"><span>3,000</span><span>2,000</span><span>1,000</span><span>0</span></div><div class="chart-plot"><span v-for="line in 3" :key="line" class="chart-gridline" :class="`grid-${line}`"></span><svg viewBox="0 0 620 170" preserveAspectRatio="none" role="img" aria-label="近七日收益上升趨勢圖"><defs><linearGradient id="chart-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#d9f15a" stop-opacity=".55" /><stop offset="100%" stop-color="#d9f15a" stop-opacity=".02" /></linearGradient></defs><path d="M0 142 C32 134 42 138 70 119 S110 133 145 102 S180 118 215 83 S255 103 290 77 S333 98 360 62 S405 76 438 53 S478 65 510 35 S552 57 580 22 S603 31 620 12 L620 170 L0 170 Z" fill="url(#chart-fill)" /><path d="M0 142 C32 134 42 138 70 119 S110 133 145 102 S180 118 215 83 S255 103 290 77 S333 98 360 62 S405 76 438 53 S478 65 510 35 S552 57 580 22 S603 31 620 12" fill="none" stroke="#262720" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke" /></svg><div class="chart-x-labels"><span>10/27</span><span>10/28</span><span>10/29</span><span>10/30</span><span>10/31</span><span>11/01</span><span>11/02</span></div></div></div><div class="chart-footnote"><span></span>收益跟著你的熱情一起成長！</div></el-card>
-            <el-card class="quick-card" shadow="never"><div class="section-title"><div><div class="workspace-eyebrow">快速入口</div><h2>快速入口</h2></div><span class="quick-star"><el-icon><StarFilled /></el-icon></span></div><button class="quick-entry" @click="activeSection = '推廣訂單'"><span class="quick-symbol coral"><el-icon><ShoppingBag /></el-icon></span><span><strong>推廣訂單</strong><small>查看成功訂單</small></span><el-icon><ArrowRight /></el-icon></button><button class="quick-entry" @click="activeSection = '提現記錄'"><span class="quick-symbol lemon"><el-icon><Wallet /></el-icon></span><span><strong>提現記錄</strong><small>追蹤審核進度</small></span><el-icon><ArrowRight /></el-icon></button><button class="quick-entry" @click="activeSection = '收益明細'"><span class="quick-symbol blue"><el-icon><Tickets /></el-icon></span><span><strong>收益明細</strong><small>每一筆都清楚</small></span><el-icon><ArrowRight /></el-icon></button><el-button class="invite-button" plain @click="copyInvite"><el-icon><Link /></el-icon><span><strong>邀請連結</strong><small>分享你的專屬推廣碼</small></span><el-tag>複製</el-tag></el-button></el-card>
+            <el-card class="quick-card" shadow="never"><div class="section-title"><div><div class="workspace-eyebrow">快速入口</div><h2>快速入口</h2></div><span class="quick-star"><el-icon><StarFilled /></el-icon></span></div><button class="quick-entry" @click="activeSection = '推廣訂單'"><span class="quick-symbol coral"><el-icon><ShoppingBag /></el-icon></span><span><strong>推廣訂單</strong><small>查看成功訂單</small></span><el-icon><ArrowRight /></el-icon></button><button class="quick-entry" @click="activeSection = '提現記錄'"><span class="quick-symbol lemon"><el-icon><Wallet /></el-icon></span><span><strong>提現記錄</strong><small>追蹤審核進度</small></span><el-icon><ArrowRight /></el-icon></button><button class="quick-entry" @click="activeSection = '收益��細'"><span class="quick-symbol blue"><el-icon><Tickets /></el-icon></span><span><strong>收益明細</strong><small>每一筆都清楚</small></span><el-icon><ArrowRight /></el-icon></button><el-button class="invite-button" plain @click="copyInvite"><el-icon><Link /></el-icon><span><strong>邀請連結</strong><small>分享你的專屬推廣碼</small></span><el-tag>複製</el-tag></el-button></el-card>
           </section>
           <el-card class="recent-card" shadow="never"><div class="section-title"><div><div class="workspace-eyebrow">最新動態</div><h2>最新推廣訂單</h2></div><el-button text @click="activeSection = '推廣訂單'">查看全部 <el-icon><ArrowRight /></el-icon></el-button></div><div class="recent-row" v-for="order in orderRows.slice(0, 3)" :key="order.id"><span class="recent-avatar">{{ order.member.slice(0, 1) }}</span><span class="recent-name"><strong>{{ order.member }}</strong><small>{{ order.name }}・今天 {{ order.time }}</small></span><strong class="recent-earning">+ {{ order.earning }}</strong><span class="recent-check"><el-icon><Check /></el-icon></span></div></el-card>
         </template>
