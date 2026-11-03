@@ -2,7 +2,6 @@
 import { computed, reactive, ref } from 'vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { ArrowRight, RefreshRight, StarFilled, User, Lock, Key } from '@element-plus/icons-vue'
-import { RouterLink } from 'vue-router'
 
 const codePool = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
 const createCode = () => Array.from({ length: 5 }, () => codePool[Math.floor(Math.random() * codePool.length)]).join('')
@@ -42,7 +41,7 @@ async function submitLogin() {
     return
   }
 
-  ElMessage.info('圖形驗證通過；登入服務尚未連接，未建立登入狀態。')
+  ElMessage.error('登入驗證服務尚未連接，無法驗證帳號密碼。')
 }
 </script>
 
@@ -95,8 +94,6 @@ async function submitLogin() {
           <div class="login-options"><el-checkbox>記住帳號</el-checkbox><button type="button" class="forgot-link" @click="ElMessage.info('請聯絡平台管理員重設密碼')">忘記密碼？</button></div>
           <el-button class="login-submit" type="primary" size="large" @click="submitLogin">登入帳號 <el-icon><ArrowRight /></el-icon></el-button>
         </el-form>
-        <div class="login-demo-note"><span class="note-bullet"></span>目前為介面預覽；驗證碼在瀏覽器端驗證，登入需另接後端服務。</div>
-        <RouterLink class="preview-link" to="/dashboard">查看工作台介面預覽 <el-icon><ArrowRight /></el-icon></RouterLink>
       </div>
       <footer class="login-footer"><span>© 2026 HK夹公仔</span><span>夾住好運，分享快樂</span></footer>
     </section>

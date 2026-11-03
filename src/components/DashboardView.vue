@@ -6,8 +6,7 @@ import {
   ArrowDown,
   ArrowRight,
   ArrowUp,
-  Bell,
-  Calendar,
+   Calendar,
   Check,
   CircleCheck,
   Coin,
@@ -241,7 +240,7 @@ async function copyInvite() {
     <main class="workspace-main">
       <header class="workspace-topbar">
         <div class="workspace-breadcrumb"><span>網紅推廣中心</span><span class="breadcrumb-slash">／</span><strong>{{ pageTitle }}</strong></div>
-        <div class="workspace-top-actions"><span class="top-date"><el-icon><Calendar /></el-icon>2026 年 11 月 2 日</span><el-button class="notification-button" circle text aria-label="通知" @click="ElMessage.info('目前沒有新通知')"><el-icon><Bell /></el-icon></el-button><img src="/creator-avatar.png" alt="Kiki 林可欣" /></div>
+        <div class="workspace-top-actions"><span class="top-date"><el-icon><Calendar /></el-icon>2026 年 11 月 2 日</span><img src="/creator-avatar.png" alt="Kiki 林可欣" /></div>
       </header>
       <div class="workspace-content">
         <template v-if="activeSection === '工作台總覽'">
