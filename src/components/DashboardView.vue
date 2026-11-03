@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
 import {
   ArrowDown,
   ArrowRight,
@@ -23,6 +24,8 @@ import {
   UserFilled,
   Wallet,
 } from '@element-plus/icons-vue'
+
+const router = useRouter()
 
 type WithdrawalRecord = {
   id: string
@@ -59,10 +62,10 @@ const navItems = [
 ]
 const pageTitle = computed(() => activeSection.value)
 const orderRows = [
-  { id: 'HK202611020081', name: '月光會員季卡', amount: 'HK$ 128.00', member: '林小葵', time: '11/02 14:22', earning: 'HK$ 12.80', status: '已結算' },
-  { id: 'HK202611020074', name: '星塵會員年卡', amount: 'HK$ 688.00', member: '陳可可', time: '11/02 11:08', earning: 'HK$ 68.80', status: '已結算' },
-  { id: 'HK202611010316', name: '月光會員月卡', amount: 'HK$ 48.00', member: '阿橙同學', time: '11/01 19:46', earning: 'HK$ 4.80', status: '已結算' },
-  { id: 'HK202611010289', name: '星塵會員季卡', amount: 'HK$ 198.00', member: 'Momo醬', time: '11/01 16:30', earning: 'HK$ 19.80', status: '處理中' },
+  { id: 'HK202611020081', name: '100金幣充值', amount: 'HK$ 128.00', member: '林小葵', time: '11/02 14:22', earning: 'HK$ 12.80', status: '已結算' },
+  { id: 'HK202611020074', name: '200金幣充值', amount: 'HK$ 688.00', member: '陳可可', time: '11/02 11:08', earning: 'HK$ 68.80', status: '已結算' },
+  { id: 'HK202611010316', name: '300金幣充值', amount: 'HK$ 48.00', member: '阿橙同學', time: '11/01 19:46', earning: 'HK$ 4.80', status: '已結算' },
+  { id: 'HK202611010289', name: '400金幣充值', amount: 'HK$ 198.00', member: 'Momo醬', time: '11/01 16:30', earning: 'HK$ 19.80', status: '處理中' },
 ]
 const teamRows = [
   { name: '林小葵', phone: '+852 9128 ····', joined: '2026/11/02 14:22', orders: 18 },
@@ -93,7 +96,7 @@ const sectionCopy: Record<string, string> = {
   提現記錄: '提現申請狀態與打款進度，一目瞭然。',
   收益明細: '完整記錄每一筆收益變化。',
 }
-const sectionDescription = computed(() => sectionCopy[activeSection.value] ?? '管理你的創作者資料。')
+const sectionDescription = computed(() => sectionCopy[activeSection.value] ?? '管理你的網紅推廣資料。')
 const summaryLabel = computed(() => activeSection.value === '我的團隊' ? '團隊總人數' : activeSection.value === '推廣訂單' ? '累計推廣訂單' : activeSection.value === '提現記錄' ? '累計提現金額' : '本月收益')
 const summaryValue = computed(() => activeSection.value === '我的團隊' ? '1,286 人' : activeSection.value === '推廣訂單' ? '3,840 筆' : activeSection.value === '提現記錄' ? 'HK$ 32,600' : 'HK$ 8,460')
 const secondaryValue = computed(() => activeSection.value === '我的團隊' ? '342 人' : activeSection.value === '推廣訂單' ? '216 筆' : activeSection.value === '提現記錄' ? '12 筆' : '148 筆')
@@ -161,6 +164,24 @@ function showWithdrawalDetail(record: unknown, mode: 'reason' | 'proof') {
   withdrawalDetailDialog.value = true
 }
 
+async function handleAccountAction(command: string) {
+  if (command === 'password') {
+    await router.push('/change-password')
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm('退出後將返回登入頁面。', '確認退出登入', {
+      confirmButtonText: '確認退出',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+    await router.push('/login')
+  } catch {
+    return
+  }
+}
+
 function copyInvite() {
   navigator.clipboard?.writeText('https://hk-jia-gong-zai.example/invite/KIKI2026')
     .then(() => ElMessage.success('邀請連結已複製'))
@@ -173,9 +194,9 @@ function copyInvite() {
     <aside class="workspace-sidebar">
       <RouterLink class="workspace-brand" to="/dashboard">
         <span class="workspace-brand-icon"><el-icon><Coin /></el-icon></span>
-        <span><strong>HK夹公仔</strong><small>創作者工作台</small></span>
+        <span><strong>HK夹公仔</strong><small>網紅專屬推廣中心</small></span>
       </RouterLink>
-      <div class="workspace-nav-label">創作者中心</div>
+      <div class="workspace-nav-label">網紅推廣中心</div>
       <el-menu :default-active="activeSection" class="workspace-menu" @select="activeSection = $event">
         <el-menu-item v-for="item in navItems" :key="item.label" :index="item.label">
           <el-icon><component :is="item.icon" /></el-icon><span>{{ item.label }}</span>
@@ -184,19 +205,19 @@ function copyInvite() {
       </el-menu>
       <div class="workspace-sidebar-bottom">
         <div class="invite-mini"><span class="invite-mini-icon"><el-icon><Link /></el-icon></span><span><strong>邀請好友一起賺</strong><small>分享連結，解鎖更多獎勵</small></span></div>
-        <div class="workspace-user"><img src="/creator-avatar.png" alt="Kiki 的動漫風頭像" /><span><strong>Kiki 林可欣</strong><small>認證創作者</small></span><RouterLink class="logout-button" to="/login" aria-label="退出登入" title="退出登入"><el-icon><SwitchButton /></el-icon></RouterLink></div>
+        <div class="workspace-user"><img src="/creator-avatar.png" alt="Kiki 的動漫風頭像" /><span><strong>Kiki 林可欣</strong><small>認證網紅</small></span><el-dropdown trigger="hover" placement="top-end" @command="handleAccountAction"><button class="logout-button" type="button" aria-label="帳戶選單" title="帳戶選單"><el-icon><SwitchButton /></el-icon></button><template #dropdown><el-dropdown-menu><el-dropdown-item command="logout">退出登入</el-dropdown-item><el-dropdown-item command="password">修改密碼</el-dropdown-item></el-dropdown-menu></template></el-dropdown></div>
       </div>
     </aside>
 
     <main class="workspace-main">
       <header class="workspace-topbar">
-        <div class="workspace-breadcrumb"><span>創作者中心</span><span class="breadcrumb-slash">／</span><strong>{{ pageTitle }}</strong></div>
+        <div class="workspace-breadcrumb"><span>網紅推廣中心</span><span class="breadcrumb-slash">／</span><strong>{{ pageTitle }}</strong></div>
         <div class="workspace-top-actions"><span class="top-date"><el-icon><Calendar /></el-icon>2026 年 11 月 2 日</span><el-button class="notification-button" circle text aria-label="通知" @click="ElMessage.info('目前沒有新通知')"><el-icon><Bell /></el-icon></el-button><img src="/creator-avatar.png" alt="Kiki 林可欣" /></div>
       </header>
       <div class="workspace-content">
         <template v-if="activeSection === '工作台總覽'">
-          <section class="workspace-welcome"><div><div class="workspace-eyebrow">星期一・2026 年 11 月 2 日</div><h1>早安，Kiki <span><el-icon><StarFilled /></el-icon></span></h1><p>今天也來看看你的創作者能量值吧！</p></div></section>
-          <section class="balance-banner"><div class="balance-copy"><span class="balance-label"><el-icon><Coin /></el-icon>可提現收益 <i></i> 即時更新</span><div class="balance-total"><small>HK$</small> {{ balanceParts.whole }}<span>.{{ balanceParts.cents }}</span></div><p>累計為社群創造的價值，正在發光。</p><el-button class="balance-action" @click="openPayoutDialog()">提現收益 <el-icon><ArrowUp /></el-icon></el-button></div><div class="balance-mascot"><span class="mascot-spark"><el-icon><StarFilled /></el-icon></span><img src="/creator-avatar.png" alt="創作者動漫角色插畫" /><span class="mascot-sticker">好運<br />加倍！</span><span class="mascot-coin">$</span></div></section>
+          <section class="workspace-welcome"><div><div class="workspace-eyebrow">星期一・2026 年 11 月 2 日</div><h1>早安，Kiki <span><el-icon><StarFilled /></el-icon></span></h1><p>今天也來看看你的推廣表現吧！</p></div></section>
+          <section class="balance-banner"><div class="balance-copy"><span class="balance-label"><el-icon><Coin /></el-icon>可提現收益 <i></i> 即時更新</span><div class="balance-total"><small>HK$</small> {{ balanceParts.whole }}<span>.{{ balanceParts.cents }}</span></div><p>累計為社群創造的價值，正在發光。</p><el-button class="balance-action" @click="openPayoutDialog()">提現收益 <el-icon><ArrowUp /></el-icon></el-button></div><div class="balance-mascot"><span class="mascot-spark"><el-icon><StarFilled /></el-icon></span><img src="/creator-avatar.png" alt="網紅動漫角色插畫" /><span class="mascot-sticker">好運<br />加倍！</span><span class="mascot-coin">$</span></div></section>
           <section class="metric-grid">
             <el-card v-for="metric in [
               { label: '今日收益', value: 'HK$ 286.40', change: '+18.6%', icon: ArrowUp, tone: 'mint' },
@@ -216,7 +237,7 @@ function copyInvite() {
         </template>
 
         <template v-else>
-          <section class="list-page-heading"><div><div class="workspace-eyebrow">創作者數據</div><h1>{{ pageTitle }} <span><el-icon><StarFilled /></el-icon></span></h1><p>{{ sectionDescription }}</p></div><el-button v-if="activeSection === '我的團隊'" type="primary" @click="copyInvite"><el-icon><Link /></el-icon>邀請好友</el-button></section>
+          <section class="list-page-heading"><div><div class="workspace-eyebrow">推廣中心數據</div><h1>{{ pageTitle }} <span><el-icon><StarFilled /></el-icon></span></h1><p>{{ sectionDescription }}</p></div><el-button v-if="activeSection === '我的團隊'" type="primary" @click="copyInvite"><el-icon><Link /></el-icon>邀請好友</el-button></section>
           <section v-if="activeSection === '我的團隊'" class="metric-grid list-metrics team-stat-grid"><el-card v-for="metric in teamMetrics" :key="metric.label" class="metric-card" shadow="never"><div class="metric-heading"><span>{{ metric.label }}</span><span class="metric-icon" :class="metric.tone"><el-icon><component :is="metric.icon" /></el-icon></span></div><strong>{{ metric.value }}</strong><div class="metric-change"><span>{{ metric.change }}</span></div></el-card></section>
           <section v-else class="metric-grid list-metrics"><el-card class="metric-card" shadow="never"><div class="metric-heading"><span>{{ summaryLabel }}</span><span class="metric-icon mint"><el-icon><DataAnalysis /></el-icon></span></div><strong>{{ summaryValue }}</strong><div class="metric-change"><span>即時更新</span></div></el-card><el-card class="metric-card" shadow="never"><div class="metric-heading"><span>本月新增</span><span class="metric-icon lavender"><el-icon><ArrowUp /></el-icon></span></div><strong>{{ secondaryValue }}</strong><div class="metric-change"><span>本月累計</span></div></el-card><el-card class="metric-card" shadow="never"><div class="metric-heading"><span>資料狀態</span><span class="metric-icon peach"><el-icon><CircleCheck /></el-icon></span></div><strong>同步正常</strong><div class="metric-change"><span>示意資料</span></div></el-card></section>
           <el-card class="table-card" shadow="never"><div class="table-toolbar"><div><h2>{{ pageTitle }}清單</h2><span class="row-count">顯示近期資料</span></div><div class="table-filters"><el-input class="table-search" placeholder="搜尋資料" :prefix-icon="User" /><el-date-picker type="daterange" range-separator="至" start-placeholder="開始日期" end-placeholder="結束日期" value-format="YYYY-MM-DD" /><el-button @click="ElMessage.info('日期篩選介面示意')"><el-icon><Refresh /></el-icon>篩選</el-button></div></div>
@@ -253,8 +274,8 @@ function copyInvite() {
     <el-dialog v-model="withdrawalDetailDialog" :title="withdrawalDetailTitle" width="min(480px, calc(100vw - 32px))" align-center>
       <template v-if="selectedWithdrawal">
         <div v-if="withdrawalDetailMode === 'reason'" class="rejection-detail"><div class="rejection-icon"><el-icon><CircleCheck /></el-icon></div><div><strong>申請未通過</strong><p>{{ selectedWithdrawal.reason || '審核未通過，請聯絡平台管理員了解詳情。' }}</p></div></div>
-        <div v-else class="proof-paper"><div class="proof-paper-top"><span>HK夹公仔</span><el-tag type="info" effect="plain">示意憑證</el-tag></div><div class="proof-status">轉帳已完成</div><strong class="proof-amount">{{ selectedWithdrawal.amount }}</strong><div class="proof-divider"></div><dl><div><dt>收款銀行</dt><dd>{{ selectedWithdrawal.bank || '滙豐銀行' }}</dd></div><div><dt>收款帳號</dt><dd>{{ selectedWithdrawal.accountMask || '•••• 1112' }}</dd></div><div><dt>交易編號</dt><dd>{{ selectedWithdrawal.voucher || 'FPS-20261101-77820' }}</dd></div><div><dt>打款時間</dt><dd>{{ selectedWithdrawal.time }}</dd></div></dl><span class="proof-watermark">DEMO</span></div>
-        <p v-if="withdrawalDetailMode === 'proof'" class="proof-caption">目前為介面示意憑證，正式圖片需由管理端上傳。</p>
+        <div v-else class="proof-image-preview"><img src="/payment-proof-placeholder.png" alt="打款憑證 PNG 示意圖" /><span class="proof-demo-tag">PNG 佔位圖</span></div>
+        <p v-if="withdrawalDetailMode === 'proof'" class="proof-caption">目前展示 PNG 佔位圖；正式憑證需由管理端上傳。</p>
       </template>
       <template #footer><el-button @click="withdrawalDetailDialog = false">關閉</el-button></template>
     </el-dialog>

@@ -48,9 +48,9 @@ async function submitLogin() {
 
 <template>
   <main class="login-page">
-    <section class="login-poster" aria-label="HK夹公仔創作者平台介紹">
+    <section class="login-poster" aria-label="HK夹公仔網紅推廣平台介紹">
       <div class="poster-grain" aria-hidden="true"></div>
-      <div class="poster-brand"><span class="poster-brand-mark"><StarFilled /></span><span><strong>HK夹公仔</strong><small>創作者中心</small></span></div>
+      <div class="poster-brand"><span class="poster-brand-mark"><StarFilled /></span><span><strong>HK夹公仔</strong><small>網紅推廣中心</small></span></div>
       <div class="poster-copy">
         <span class="poster-kicker">歡迎回到你的舞台</span>
         <h1>把熱愛夾進日常，<br />把成就帶回家。</h1>
@@ -59,7 +59,7 @@ async function submitLogin() {
       <div class="poster-illustration">
         <div class="illustration-sun"><el-icon><StarFilled /></el-icon></div>
         <div class="illustration-ring"></div>
-        <img src="/creator-avatar.png" alt="HK夹公仔創作者角色插畫" />
+        <img src="/creator-avatar.png" alt="HK夹公仔網紅角色插畫" />
         <span class="illustration-label">好運加倍！</span>
         <span class="illustration-star star-one"><el-icon><StarFilled /></el-icon></span>
         <span class="illustration-star star-two"><el-icon><StarFilled /></el-icon></span>
@@ -69,9 +69,9 @@ async function submitLogin() {
     </section>
 
     <section class="login-side">
-      <div class="login-side-top"><span class="top-dot"></span> 官方創作者平台 <span class="top-separator">／</span> 安全登入</div>
+      <div class="login-side-top"><span class="top-dot"></span> 官方網紅推廣平台 <span class="top-separator">／</span> 安全登入</div>
       <div class="login-card-wrap">
-        <div class="login-card-head"><span class="login-eyebrow">CREATOR LOGIN</span><span class="login-card-sticker">LOGIN<br /><el-icon><StarFilled /></el-icon></span><h2>登入你的創作者帳號</h2><p>輸入帳號密碼，開啟今天的好運氣。</p></div>
+        <div class="login-card-head"><span class="login-eyebrow">INFLUENCER LOGIN</span><span class="login-card-sticker">LOGIN<br /><el-icon><StarFilled /></el-icon></span><h2>登入你的網紅帳號</h2><p>輸入帳號密碼，開啟今天的好運氣。</p></div>
         <el-form ref="formRef" class="login-form" :model="form" :rules="rules" label-position="top" @submit.prevent="submitLogin">
           <el-form-item label="帳號" prop="account">
             <el-input v-model="form.account" size="large" :prefix-icon="User" placeholder="請輸入帳號" autocomplete="username" clearable />

@@ -5,5 +5,6 @@ export const router = createRouter({
     { path: '/', name: 'login', component: () => import('./components/LoginView.vue') },
     { path: '/login', name: 'login-alias', component: () => import('./components/LoginView.vue') },
     { path: '/dashboard', name: 'dashboard', component: () => import('./components/DashboardView.vue') },
+    { path: '/change-password', name: 'change-password', component: () => import('./components/PasswordChangeView.vue') },
   ],
 })
