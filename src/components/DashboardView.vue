@@ -170,10 +170,13 @@ async function handleAccountAction(command: string) {
   }
 
   try {
-    await ElMessageBox.confirm('退出後將返回登入頁面。', '確認退出登入', {
+await ElMessageBox.confirm('確定要離開目前的工作台嗎？', '確認退出登入', {
       confirmButtonText: '確認退出',
-      cancelButtonText: '取消',
+      cancelButtonText: '繼續使用',
       type: 'warning',
+      customClass: 'logout-confirm-dialog',
+      confirmButtonClass: 'logout-confirm-button',
+      cancelButtonClass: 'logout-cancel-button',
     })
     await router.push('/login')
   } catch {
