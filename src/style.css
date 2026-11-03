@@ -76,7 +76,7 @@ button { color: inherit; }
 .login-form .el-input__prefix { color: #9a998d; }
 .captcha-row { align-items: center; display: flex; gap: 10px; width: 100%; }
 .captcha-row > .el-input { flex: 1; min-width: 0; }
-.captcha-art { align-items: center; background: transparent; border: 0; cursor: pointer; display: flex; flex: 0 0 108px; height: 42px; padding: 0; position: relative; }
+.captcha-art { align-items: center; background: transparent; border: 0; cursor: pointer; display: flex; flex: 0 0 108px; height: 42px; padding: 0; position: relative; }.captcha-static { cursor: default; }
 .captcha-art svg { border: 1px solid #e6e6d8; border-radius: 8px; height: 42px; width: 108px; }
 .captcha-refresh { align-items: center; background: #fffefa; border: 1px solid #e6e6d8; border-radius: 50%; bottom: -5px; color: #747a48; display: flex; height: 19px; justify-content: center; position: absolute; right: -5px; width: 19px; }
 .captcha-refresh .el-icon { font-size: 11px; }
