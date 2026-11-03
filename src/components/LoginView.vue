@@ -1,47 +1,13 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { ArrowRight, RefreshRight, StarFilled, User, Lock, Key } from '@element-plus/icons-vue'
+import { reactive } from 'vue'
+import { ArrowRight, StarFilled, User, Lock } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 
-const codePool = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
-const createCode = () => Array.from({ length: 5 }, () => codePool[Math.floor(Math.random() * codePool.length)]).join('')
-const captchaCode = ref(createCode())
-const captchaInput = ref('')
-const formRef = ref<FormInstance>()
+const router = useRouter()
 const form = reactive({ account: '', password: '' })
-const rules: FormRules = {
-  account: [{ required: true, message: '請輸入帳號', trigger: 'blur' }],
-  password: [{ required: true, message: '請輸入密碼', trigger: 'blur' }],
-}
-
-const glyphs = computed(() => [...captchaCode.value].map((character, index) => ({
-  character,
-  x: 18 + index * 19,
-  y: 27 + ((index % 2) * 2 - 1) * 4,
-  rotation: (index % 2 === 0 ? -1 : 1) * (6 + index * 2),
-})))
-const noiseLines = [
-  { x1: 4, y1: 11, x2: 98, y2: 30, color: '#98a43f' },
-  { x1: 11, y1: 35, x2: 86, y2: 8, color: '#e18c72' },
-  { x1: 29, y1: 4, x2: 60, y2: 37, color: '#a79ac2' },
-]
-
-function refreshCaptcha() {
-  captchaCode.value = createCode()
-  captchaInput.value = ''
-}
 
 async function submitLogin() {
-  const valid = await formRef.value?.validate().catch(() => false)
-  if (!valid) return
-
-  if (captchaInput.value.trim().toUpperCase() !== captchaCode.value) {
-    ElMessage.error('圖形驗證碼不正確，請重新輸入')
-    refreshCaptcha()
-    return
-  }
-
-  ElMessage.error('登入驗證服務尚未連接，無法驗證帳號密碼。')
+  await router.push('/dashboard')
 }
 </script>
 
@@ -68,31 +34,17 @@ async function submitLogin() {
     </section>
 
     <section class="login-side">
-      <div class="login-side-top"><span class="top-dot"></span> 官方網紅推廣平台 <span class="top-separator">／</span> 安全登入</div>
+      <div class="login-side-top"><span class="top-dot"></span> 官方網紅推廣平台 <span class="top-separator">／</span> 演示入口</div>
       <div class="login-card-wrap">
-        <div class="login-card-head"><span class="login-eyebrow">INFLUENCER LOGIN</span><span class="login-card-sticker">LOGIN<br /><el-icon><StarFilled /></el-icon></span><h2>登入你的網紅帳號</h2><p>輸入帳號密碼，開啟今天的好運氣。</p></div>
-        <el-form ref="formRef" class="login-form" :model="form" :rules="rules" label-position="top" @submit.prevent="submitLogin">
+        <div class="login-card-head"><span class="login-eyebrow">DEMO ACCESS</span><span class="login-card-sticker">DEMO<br /><el-icon><StarFilled /></el-icon></span><h2>進入網紅推廣工作台</h2><p>演示模式下無需驗證帳號密碼，點擊下方按鈕即可進入。</p></div>
+        <el-form class="login-form" :model="form" label-position="top" @submit.prevent="submitLogin">
           <el-form-item label="帳號" prop="account">
             <el-input v-model="form.account" size="large" :prefix-icon="User" placeholder="請輸入帳號" autocomplete="username" clearable />
           </el-form-item>
           <el-form-item label="密碼" prop="password">
             <el-input v-model="form.password" size="large" :prefix-icon="Lock" placeholder="請輸入密碼" type="password" show-password autocomplete="current-password" @keyup.enter="submitLogin" />
           </el-form-item>
-          <el-form-item label="圖形驗證碼" class="captcha-form-item">
-            <div class="captcha-row">
-              <el-input v-model="captchaInput" size="large" :prefix-icon="Key" placeholder="輸入右側驗證碼" maxlength="5" autocomplete="off" @keyup.enter="submitLogin" />
-              <button class="captcha-art" type="button" aria-label="刷新圖形驗證碼" @click="refreshCaptcha">
-                <svg viewBox="0 0 108 42" role="img" aria-label="圖形驗證碼">
-                  <rect x="1" y="1" width="106" height="40" rx="8" fill="#f5f7e7" />
-                  <line v-for="(line, index) in noiseLines" :key="index" :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" :stroke="line.color" stroke-width="1.1" opacity=".66" />
-                  <text v-for="(glyph, index) in glyphs" :key="`${glyph.character}-${index}`" :x="glyph.x" :y="glyph.y" :transform="`rotate(${glyph.rotation} ${glyph.x} ${glyph.y})`" fill="#303126" font-size="16" font-weight="800" font-family="monospace">{{ glyph.character }}</text>
-                </svg>
-                <span class="captcha-refresh"><el-icon><RefreshRight /></el-icon></span>
-              </button>
-            </div>
-          </el-form-item>
-          <div class="login-options"><el-checkbox>記住帳號</el-checkbox><button type="button" class="forgot-link" @click="ElMessage.info('請聯絡平台管理員重設密碼')">忘記密碼？</button></div>
-          <el-button class="login-submit" type="primary" size="large" @click="submitLogin">登入帳號 <el-icon><ArrowRight /></el-icon></el-button>
+          <el-button class="login-submit" type="primary" size="large" @click="submitLogin">進入工作台 <el-icon><ArrowRight /></el-icon></el-button>
         </el-form>
       </div>
       <footer class="login-footer"><span>© 2026 HK夹公仔</span><span>夾住好運，分享快樂</span></footer>
